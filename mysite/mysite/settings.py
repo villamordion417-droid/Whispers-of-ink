@@ -32,6 +32,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'mysite.accounts', 
+    'mysite.writings',
+    'mysite.comments',
+    'mysite.core',
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
