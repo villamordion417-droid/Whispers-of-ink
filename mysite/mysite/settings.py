@@ -39,17 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    # Local apps - using the mysite prefix because of your folder structure
     'mysite.accounts', 
+    'mysite.writings',
+    'mysite.comments',
     'mysite.core',
 ]
-    
-    # Local apps
-    'accounts',
-    'writings',
-    'comments',
-    'core'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
