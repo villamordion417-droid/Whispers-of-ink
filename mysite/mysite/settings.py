@@ -39,13 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'mysite.accounts', 
+    'mysite.core',
+]
     
     # Local apps
     'accounts',
     'writings',
     'comments',
-    'core',
-]
+    'core'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
