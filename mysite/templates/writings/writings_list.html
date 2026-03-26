@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}All Writings - Whispers of Ink{% endblock %}
+
+{% block extra_css %}
+<style>
+    .writings-header {
+        margin-bottom: 2rem;
+    }
+
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #6b5344;
+        font-weight: bold;
+    }
+
+    .filter-group select,
+    .filter-group input {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #d4ccc0;
+        border-radius: 5px;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        background-color: #c9a961;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .filter-btn:hover {
+        background-color: #b39451;
+    }
+
+    .clear-filters {
+        background-color: #e8dfd5;
+        color: #6b5344;
+    }
+
+    .clear-filters:hover {
+        background-color: #d4ccc0;
+    }
+
+    .category-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .category-btn {
+        padding: 0.5rem 1rem;
+        background-color: #f0e8dc;
+        color: #6b5344;
+        border: 2px solid transparent;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+        border-color: #c9a961;
+        background-color: #fff;
+    }
+
+    .writings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .writing-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 4px solid #c9a961;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .writing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .writing-card h3 {
+        margin-top: 0;
+        color: #6b5344;
+    }
+
+    .writing-meta {
+        color: #999;
+        font-size: 0.85rem;
+        margin: 0.5rem 0;
+    }
+
+    .writing-category {
+        display: inline-block;
+        background-color: #f0e8dc;
+        color: #6b5344;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .writing-excerpt {
+        flex-grow: 1;
+        color: #666;
+        line-height: 1.6;
+        margin: 1rem 0;
+    }
+
+    .read-more {
+        color: #c9a961;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .read-more:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        color: #8b7355;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+    }
+
+    .sort-options {
+        margin-bottom: 1rem;
+    }
+
+    .sort-options label {
+        margin-right: 1rem;
+        color: #6b5344;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="writings-header">
+    <h1>✨ All Writings</h1>
+    <p>Explore the beautiful creations of our community</p>
+</div>
+
+<div class="filter-section">
+    <h3 style="margin-top: 0;">Explore by Category</h3>
+    <div class="category-buttons">
+        <a href="{% url 'writings_list' %}" class="category-btn {% if not selected_category %}active{% endif %}">All Writings</a>
+        {% for category in categories %}
+            <a href="?category={{ category.slug }}" class="category-btn {% if category.slug == selected_category %}active{% endif %}">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="filter-row">
+        <div class="filter-group">
+            <label for="search">Search</label>
+            <form method="get" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="search" name="search" placeholder="Search by title..." value="{{ search_query }}">
+                <button type="submit" class="filter-btn">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if posts %}
+    <div class="writings-grid">
+        {% for post in posts %}
+            <div class="writing-card">
+                <h3>{{ post.title }}</h3>
+                <div class="writing-meta">
+                    By <strong>{{ post.author.username }}</strong><br>
+                    {{ post.created_at|date:"M d, Y" }}
+                </div>
+                {% if post.category %}
+                    <span class="writing-category">{{ post.category.name }}</span>
+                {% endif %}
+                <div class="writing-excerpt">
+                    {{ post.content|truncatewords:40 }}
+                </div>
+                <a href="{% url 'post_detail' post.pk %}" class="read-more">Read More →</a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        {% if search_query %}
+            <p>No writings found matching "{{ search_query }}". Try a different search! 🔍</p>
+        {% elif selected_category %}
+            <p>No writings in this category yet. Be the first to share! 🌿</p>
+        {% else %}
+            <p>No writings yet. Be the first to share your voice! ✨</p>
+        {% endif %}
+        <a href="{% url 'create_post' %}" class="btn btn-primary">Write Something</a>
+    </div>
+{% endif %}
+{% endblock %}

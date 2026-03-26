@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Whispers of Ink{% endblock %}
+
+{% block extra_css %}
+<style>
+    .post-header {
+        background: linear-gradient(135deg, #f5ede3 0%, #f0e8dc 100%);
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .post-title {
+        margin: 0 0 1rem 0;
+        color: #6b5344;
+    }
+
+    .post-meta {
+        color: #8b7355;
+        font-size: 0.95rem;
+    }
+
+    .post-meta-item {
+        display: inline-block;
+        margin-right: 1.5rem;
+    }
+
+    .post-category {
+        display: inline-block;
+        background-color: #c9a961;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .post-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        font-size: 1.05rem;
+        color: #555;
+    }
+
+    .post-content p {
+        margin-bottom: 1.5rem;
+        text-align: justify;
+    }
+
+    .inspiration-note {
+        background: #f9f6f0;
+        padding: 1.5rem;
+        border-left: 4px solid #c9a961;
+        margin: 2rem 0;
+        border-radius: 5px;
+        font-style: italic;
+        color: #8b7355;
+    }
+
+    .inspiration-note strong {
+        color: #6b5344;
+    }
+
+    .comments-section {
+        margin-top: 3rem;
+    }
+
+    .comments-title {
+        font-size: 1.5rem;
+        color: #6b5344;
+        margin-bottom: 1.5rem;
+    }
+
+    .comment-form {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .comment-form h3 {
+        margin-top: 0;
+    }
+
+    .comment-form textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #d4ccc0;
+        border-radius: 5px;
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .submit-comment-btn {
+        margin-top: 1rem;
+    }
+
+    .comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .comment {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 3px solid #f0e8dc;
+    }
+
+    .comment-author {
+        font-weight: bold;
+        color: #6b5344;
+        margin-bottom: 0.3rem;
+    }
+
+    .comment-date {
+        font-size: 0.85rem;
+        color: #999;
+        margin-bottom: 0.8rem;
+    }
+
+    .comment-content {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .no-comments {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        color: #8b7355;
+    }
+
+    .login-prompt {
+        background: #f9f6f0;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        color: #8b7355;
+    }
+
+    .login-prompt a {
+        color: #c9a961;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .login-prompt a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-actions {
+            flex-direction: column;
+        }
+
+        .post-actions .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<article>
+    <div class="post-header">
+        <h1 class="post-title">{{ post.title }}</h1>
+        <div class="post-meta">
+            <span class="post-meta-item">✍️ By <strong>{{ post.author.username }}</strong></span>
+            <span class="post-meta-item">📅 {{ post.created_at|date:"F d, Y" }}</span>
+            {% if post.category %}
+                <span class="post-category">{{ post.category.name }}</span>
+            {% endif %}
+        </div>
+        
+        {% if can_edit or can_delete %}
+            <div class="post-actions">
+                {% if can_edit %}
+                    <a href="{% url 'edit_post' post.pk %}" class="btn btn-primary">Edit</a>
+                {% endif %}
+                {% if can_delete %}
+                    <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">Delete</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+
+    {% if post.inspiration_note %}
+        <div class="inspiration-note">
+            <strong>💭 Inspiration:</strong> {{ post.inspiration_note }}
+        </div>
+    {% endif %}
+</article>
+
+<section class="comments-section">
+    <h2 class="comments-title">💬 Feedback & Comments</h2>
+
+    {% if user.is_authenticated %}
+        <div class="comment-form">
+            <h3>Share Your Thoughts</h3>
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="content" placeholder="Share your thoughts or feedback..." required></textarea>
+                <button type="submit" class="btn btn-primary submit-comment-btn">Post Comment</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="login-prompt">
+            <p>Want to share your thoughts? <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">create an account</a> to comment.</p>
+        </div>
+    {% endif %}
+
+    {% if comments %}
+        <div class="comments-list">
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-author">{{ comment.author.username }}</div>
+                    <div class="comment-date">{{ comment.created_at|date:"F d, Y \a\t g:i A" }}</div>
+                    <div class="comment-content">{{ comment.content|linebreaks }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-comments">
+            <p>No comments yet. Be the first to share your thoughts! 🌿</p>
+        </div>
+    {% endif %}
+</section>
+
+<div style="text-align: center; margin-top: 3rem;">
+    <a href="{% url 'writings_list' %}" class="btn btn-secondary">← Back to All Writings</a>
+</div>
+{% endblock %}

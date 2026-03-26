@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Whispers of Ink{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-content {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        line-height: 1.8;
+    }
+
+    .about-section {
+        margin-bottom: 2rem;
+    }
+
+    .about-icon {
+        font-size: 3rem;
+        text-align: center;
+        margin: 1rem 0;
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">About Whispers of Ink</h1>
+
+<div class="about-content">
+    <div class="about-icon">🕊️</div>
+    
+    <div class="about-section">
+        <h2>Our Mission</h2>
+        <p>
+            Whispers of Ink is a creative sanctuary where writers, poets, and thinkers can share their voices with the world. 
+            We believe that every story matters, every emotion deserves to be heard, and every voice has the power to inspire.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h2>What We Offer</h2>
+        <p>
+            This platform provides a peaceful digital space for:
+        </p>
+        <ul style="margin: 1rem 0; margin-left: 2rem;">
+            <li>Sharing poems, short stories, essays, and personal reflections</li>
+            <li>Connecting with readers who appreciate meaningful words</li>
+            <li>Building confidence in your creative expression</li>
+            <li>Creating a personal portfolio of your work</li>
+            <li>Receiving feedback and encouragement from the community</li>
+        </ul>
+    </div>
+
+    <div class="about-section">
+        <h2>Our Values</h2>
+        <ul style="margin: 1rem 0; margin-left: 2rem;">
+            <li><strong>Calm & Peaceful:</strong> A quiet digital space free from noise and distractions</li>
+            <li><strong>Creative Expression:</strong> Encouraging writers to express themselves authentically</li>
+            <li><strong>Community:</strong> Building connections between writers and readers</li>
+            <li><strong>Growth:</strong> Supporting writers in developing their skills and confidence</li>
+        </ul>
+    </div>
+
+    <div class="about-section">
+        <h2>Who Is This For?</h2>
+        <p>
+            Whispers of Ink is perfect for:
+        </p>
+        <ul style="margin: 1rem 0; margin-left: 2rem;">
+            <li>Students working on creative writing projects</li>
+            <li>Aspiring writers developing their craft</li>
+            <li>Anyone who loves writing and wants to share their voice</li>
+            <li>Readers seeking meaningful and inspiring content</li>
+            <li>Those building a personal portfolio for future opportunities</li>
+        </ul>
+    </div>
+
+    <div class="about-section">
+        <h2>Getting Started</h2>
+        <p>
+            Ready to join our community? 
+            <a href="{% url 'register' %}" class="link-text">Create an account</a>
+            and start sharing your writings today. 
+            Explore the 
+            <a href="{% url 'writings_list' %}" class="link-text">writings</a>
+            from other creators or 
+            <a href="{% url 'create_post' %}" class="link-text">publish your first piece.</a>
+        </p>
+    </div>
+
+    <div class="about-icon" style="margin-top: 3rem;">✨</div>
+</div>
+{% endblock %}

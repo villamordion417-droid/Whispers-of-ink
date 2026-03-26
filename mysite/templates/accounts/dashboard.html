@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Whispers of Ink{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #c9a961;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #c9a961;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #8b7355;
+        font-size: 0.9rem;
+    }
+
+    .action-buttons {
+        margin-bottom: 2rem;
+    }
+
+    .posts-list {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-item {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e8dfd5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-info h3 {
+        margin: 0 0 0.5rem 0;
+        color: #6b5344;
+    }
+
+    .post-meta {
+        color: #999;
+        font-size: 0.85rem;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-link {
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+    }
+
+    .action-link.edit {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .action-link.edit:hover {
+        background-color: #bbdefb;
+    }
+
+    .action-link.delete {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+
+    .action-link.delete:hover {
+        background-color: #ffcdd2;
+    }
+
+    .action-link.view {
+        background-color: #f0f0f0;
+        color: #666;
+    }
+
+    .action-link.view:hover {
+        background-color: #e0e0e0;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #8b7355;
+    }
+
+    .empty-state p {
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .post-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .post-actions {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .action-link {
+            flex: 1;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>🌿 Your Writing Dashboard</h1>
+    <p>Welcome back, {{ user.username }}! Here's your creative space.</p>
+</div>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_posts }}</div>
+        <div class="stat-label">Published Writings</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">✨</div>
+        <div class="stat-label">Keep Creating!</div>
+    </div>
+</div>
+
+<div class="action-buttons">
+    <a href="{% url 'create_post' %}" class="btn btn-primary">+ Write New Piece</a>
+    <a href="{% url 'writings_list' %}" class="btn btn-secondary">view all writings</a>
+</div>
+
+<h2>Your Published Writings</h2>
+
+{% if user_posts %}
+    <div class="posts-list">
+        {% for post in user_posts %}
+            <div class="post-item">
+                <div class="post-info">
+                    <h3>{{ post.title }}</h3>
+                    <div class="post-meta">
+                        {% if post.category %}
+                            <span>{{ post.category.name }}</span> •
+                        {% endif %}
+                        Published {{ post.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+                <div class="post-actions">
+                    <a href="{% url 'post_detail' post.pk %}" class="action-link view">View</a>
+                    <a href="{% url 'edit_post' post.pk %}" class="action-link edit">Edit</a>
+                    <a href="{% url 'delete_post' post.pk %}" class="action-link delete">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state posts-list">
+        <p>You haven't published any writings yet. 📝</p>
+        <p>Start sharing your thoughts and stories with the world.</p>
+        <a href="{% url 'create_post' %}" class="btn btn-primary">Write Your First Piece</a>
+    </div>
+{% endif %}
+{% endblock %}

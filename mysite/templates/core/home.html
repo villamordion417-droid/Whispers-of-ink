@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Whispers of Ink{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+
+    .hero-emoji {
+        font-size: 4rem;
+        margin: 1rem 0;
+    }
+
+    .hero-text {
+        font-size: 1.3rem;
+        color: #8b7355;
+        margin: 1rem 0;
+        font-style: italic;
+    }
+
+    .emoji-line {
+        font-size: 2rem;
+        letter-spacing: 0.5rem;
+        margin: 2rem 0;
+        opacity: 0.8;
+    }
+
+    .cta-button {
+        margin-top: 2rem;
+    }
+
+    .recent-writings {
+        margin-top: 4rem;
+    }
+
+    .writings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .writing-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 4px solid #c9a961;
+    }
+
+    .writing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .writing-card h3 {
+        margin-top: 0;
+        color: #6b5344;
+    }
+
+    .writing-meta {
+        color: #999;
+        font-size: 0.85rem;
+        margin: 0.5rem 0;
+    }
+
+    .writing-category {
+        display: inline-block;
+        background-color: #f0e8dc;
+        color: #6b5344;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .read-more {
+        color: #c9a961;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        display: inline-block;
+    }
+
+    .read-more:hover {
+        text-decoration: underline;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin: 2rem 0;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #c9a961;
+    }
+
+    .stat-label {
+        color: #8b7355;
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        color: #8b7355;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-emoji">🕊️</div>
+    <h1>Whispers of Ink</h1>
+    <p class="hero-text">A peaceful space where words become memories, and silence speaks volumes.</p>
+    <div class="emoji-line">😊 😔 ✍️ 💭 🌙 🌿</div>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="btn btn-primary cta-button">Share Your Writing</a>
+    {% else %}
+        <p>Ready to share your thoughts and creative works?</p>
+        <a href="{% url 'register' %}" class="btn btn-primary cta-button">Join Us Today</a>
+    {% endif %}
+</div>
+
+<div class="stats">
+    <div class="stat-item">
+        <div class="stat-number">{{ total_posts }}</div>
+        <div class="stat-label">Writings Published</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">✨</div>
+        <div class="stat-label">Creative Voices</div>
+    </div>
+</div>
+
+<div class="recent-writings">
+    <h2 class="page-title">Recently Published</h2>
+    
+    {% if recent_posts %}
+        <div class="writings-grid">
+            {% for post in recent_posts %}
+                <div class="writing-card">
+                    <h3>{{ post.title }}</h3>
+                    <div class="writing-meta">
+                        By <strong>{{ post.author.username }}</strong> • {{ post.created_at|date:"M d, Y" }}
+                    </div>
+                    {% if post.category %}
+                        <span class="writing-category">{{ post.category.name }}</span>
+                    {% endif %}
+                    <p>{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'post_detail' post.pk %}" class="read-more">Read More →</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No writings yet. Be the first to share! 🌿</p>
+        </div>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 3rem;">
+    <a href="{% url 'writings_list' %}" class="btn btn-primary">View All Writings</a>
+</div>
+{% endblock %}
