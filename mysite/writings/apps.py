@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class WritingsConfig(AppConfig):
-    name = 'writings'
+   name = 'mysite.writings'
